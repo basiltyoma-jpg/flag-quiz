@@ -1,0 +1,14 @@
+# Зависимости (нужны только UI-тесту: npm install jsdom)
+node_modules/
+
+# Логи и временные файлы
+*.log
+_tmp/
+.tmp/
+
+# Редакторы и ОС
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store

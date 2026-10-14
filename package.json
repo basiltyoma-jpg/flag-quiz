@@ -1,0 +1,14 @@
+{
+  "name": "flag-quiz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Викторина: угадай страну по флагу или по форме территории",
+  "scripts": {
+    "assets": "node tools/download-assets.js",
+    "test": "node tools/selftest.js",
+    "test:ui": "node tools/ui-test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.2"
+  }
+}

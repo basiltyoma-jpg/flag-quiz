@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Угадай страну — флаги и территории</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__logo">🌍</span>
+        <span class="brand__text">Угадай страну</span>
+      </div>
+      <button id="btn-home" class="btn btn--ghost" type="button" hidden>В меню</button>
+    </header>
+
+    <!-- ---------------------------------------------------- настройки игры -->
+    <section id="screen-home" class="screen">
+      <h1 class="screen__title">Режим игры</h1>
+      <div class="modes" id="modes"></div>
+
+      <h2 class="screen__subtitle">Уровень сложности</h2>
+      <div class="levels" id="levels"></div>
+
+      <h2 class="screen__subtitle">
+        Количество раундов: <span class="rounds__value" id="rounds-value">10</span>
+      </h2>
+      <div class="rounds">
+        <input class="rounds__slider" id="rounds" type="range" min="1" max="50" step="1" value="10"
+               aria-label="Количество раундов от 1 до 50">
+        <div class="rounds__scale"><span>1</span><span>50</span></div>
+        <div class="rounds__quick">
+          <button type="button" data-rounds="5">5</button>
+          <button type="button" data-rounds="10">10</button>
+          <button type="button" data-rounds="20">20</button>
+          <button type="button" data-rounds="50">50</button>
+        </div>
+      </div>
+
+      <p class="hint" id="pool-hint"></p>
+
+      <button id="btn-start" class="btn btn--primary btn--wide" type="button">Играть</button>
+    </section>
+
+    <!-- ---------------------------------------------------------- вопросы -->
+    <section id="screen-game" class="screen" hidden>
+      <div class="gamebar">
+        <span id="progress-text">Вопрос 1 / 10</span>
+        <span class="gamebar__score" id="score-text">Счёт: 0</span>
+      </div>
+      <div class="progress"><div class="progress__bar" id="progress-bar"></div></div>
+
+      <p class="question" id="question-text">Чей это флаг?</p>
+
+      <div class="picture" id="picture">
+        <img class="picture__img" id="picture-img" alt="Угадайте страну по картинке">
+        <span class="picture__code" id="picture-code">?</span>
+      </div>
+
+      <div class="options" id="options"></div>
+
+      <div class="feedback" id="feedback" hidden>
+        <span class="feedback__text" id="feedback-text"></span>
+        <button id="btn-next" class="btn btn--primary" type="button">Дальше →</button>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------- результат -->
+    <section id="screen-result" class="screen" hidden>
+      <h2 class="screen__subtitle" id="result-title">Результат</h2>
+      <div class="result__score">
+        <span class="result__correct" id="result-score">0</span>
+        <span class="result__total" id="result-total">/ 10</span>
+      </div>
+      <div class="progress progress--big"><div class="progress__bar" id="result-bar"></div></div>
+      <p class="result__percent" id="result-percent">0%</p>
+      <p class="hint" id="result-best"></p>
+      <div class="result__actions">
+        <button id="btn-again" class="btn btn--primary" type="button">Ещё раз</button>
+        <button id="btn-settings" class="btn" type="button">Изменить настройки</button>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Клавиши <kbd>1</kbd>–<kbd>4</kbd> — выбрать ответ, <kbd>Enter</kbd> — дальше.
+      Изображения: flagcdn.com и mapsicon (локальные копии в папке assets).
+    </footer>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/assets.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
