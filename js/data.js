@@ -3,8 +3,10 @@
  *
  * code  — код ISO 3166-1 alpha-2 (нижний регистр): используется для файлов
  *         assets/flags/<code>.svg и assets/shapes/<code>.svg;
- * name  — русское название, которое видит игрок;
- * level — уровень сложности:
+ * name    — русское название, которое видит игрок;
+ * aliases — необязательные синонимы для режима «Название по флагу»
+ *           (Англия для Великобритании, Голландия для Нидерландов и т. п.);
+ * level   — уровень сложности:
  *           easy       узнаваемые всеми флаги;
  *           medium     средняя известность;
  *           hard       малоизвестные страны;
@@ -16,15 +18,15 @@
  */
 const COUNTRIES = [
   // ---------------------------------------------------------------- easy (36)
-  { code: 'ru', name: 'Россия', level: 'easy' },
-  { code: 'us', name: 'США', level: 'easy' },
-  { code: 'gb', name: 'Великобритания', level: 'easy' },
+  { code: 'ru', name: 'Россия', level: 'easy', aliases: ['РФ', 'Российская Федерация'] },
+  { code: 'us', name: 'США', level: 'easy', aliases: ['Америка', 'Соединённые Штаты Америки', 'USA'] },
+  { code: 'gb', name: 'Великобритания', level: 'easy', aliases: ['Англия', 'Британия', 'Соединённое Королевство', 'UK'] },
   { code: 'de', name: 'Германия', level: 'easy' },
   { code: 'fr', name: 'Франция', level: 'easy' },
   { code: 'it', name: 'Италия', level: 'easy' },
   { code: 'es', name: 'Испания', level: 'easy' },
   { code: 'pt', name: 'Португалия', level: 'easy' },
-  { code: 'nl', name: 'Нидерланды', level: 'easy' },
+  { code: 'nl', name: 'Нидерланды', level: 'easy', aliases: ['Голландия'] },
   { code: 'be', name: 'Бельгия', level: 'easy' },
   { code: 'ch', name: 'Швейцария', level: 'easy' },
   { code: 'at', name: 'Австрия', level: 'easy' },
@@ -36,11 +38,11 @@ const COUNTRIES = [
   { code: 'gr', name: 'Греция', level: 'easy' },
   { code: 'tr', name: 'Турция', level: 'easy' },
   { code: 'ua', name: 'Украина', level: 'easy' },
-  { code: 'by', name: 'Беларусь', level: 'easy' },
+  { code: 'by', name: 'Беларусь', level: 'easy', aliases: ['Белоруссия'] },
   { code: 'kz', name: 'Казахстан', level: 'easy' },
-  { code: 'cn', name: 'Китай', level: 'easy' },
+  { code: 'cn', name: 'Китай', level: 'easy', aliases: ['КНР', 'Китайская Народная Республика'] },
   { code: 'jp', name: 'Япония', level: 'easy' },
-  { code: 'kr', name: 'Южная Корея', level: 'easy' },
+  { code: 'kr', name: 'Южная Корея', level: 'easy', aliases: ['Корея', 'Республика Корея'] },
   { code: 'in', name: 'Индия', level: 'easy' },
   { code: 'br', name: 'Бразилия', level: 'easy' },
   { code: 'ar', name: 'Аргентина', level: 'easy' },
@@ -54,7 +56,7 @@ const COUNTRIES = [
   { code: 'id', name: 'Индонезия', level: 'easy' },
 
   // -------------------------------------------------------------- medium (60)
-  { code: 'za', name: 'ЮАР', level: 'medium' },
+  { code: 'za', name: 'ЮАР', level: 'medium', aliases: ['Южно-Африканская Республика'] },
   { code: 'ng', name: 'Нигерия', level: 'medium' },
   { code: 'ke', name: 'Кения', level: 'medium' },
   { code: 'ma', name: 'Марокко', level: 'medium' },
@@ -64,7 +66,7 @@ const COUNTRIES = [
   { code: 'gh', name: 'Гана', level: 'medium' },
   { code: 'ie', name: 'Ирландия', level: 'medium' },
   { code: 'is', name: 'Исландия', level: 'medium' },
-  { code: 'cz', name: 'Чехия', level: 'medium' },
+  { code: 'cz', name: 'Чехия', level: 'medium', aliases: ['Чешская Республика'] },
   { code: 'sk', name: 'Словакия', level: 'medium' },
   { code: 'hu', name: 'Венгрия', level: 'medium' },
   { code: 'ro', name: 'Румыния', level: 'medium' },
@@ -74,12 +76,12 @@ const COUNTRIES = [
   { code: 'si', name: 'Словения', level: 'medium' },
   { code: 'ba', name: 'Босния и Герцеговина', level: 'medium' },
   { code: 'al', name: 'Албания', level: 'medium' },
-  { code: 'mk', name: 'Северная Македония', level: 'medium' },
+  { code: 'mk', name: 'Северная Македония', level: 'medium', aliases: ['Македония'] },
   { code: 'me', name: 'Черногория', level: 'medium' },
   { code: 'lt', name: 'Литва', level: 'medium' },
   { code: 'lv', name: 'Латвия', level: 'medium' },
   { code: 'ee', name: 'Эстония', level: 'medium' },
-  { code: 'md', name: 'Молдова', level: 'medium' },
+  { code: 'md', name: 'Молдова', level: 'medium', aliases: ['Молдавия'] },
   { code: 'lu', name: 'Люксембург', level: 'medium' },
   { code: 'mt', name: 'Мальта', level: 'medium' },
   { code: 'cy', name: 'Кипр', level: 'medium' },
@@ -87,7 +89,7 @@ const COUNTRIES = [
   { code: 'am', name: 'Армения', level: 'medium' },
   { code: 'ge', name: 'Грузия', level: 'medium' },
   { code: 'uz', name: 'Узбекистан', level: 'medium' },
-  { code: 'kg', name: 'Кыргызстан', level: 'medium' },
+  { code: 'kg', name: 'Кыргызстан', level: 'medium', aliases: ['Киргизия'] },
   { code: 'mn', name: 'Монголия', level: 'medium' },
   { code: 'vn', name: 'Вьетнам', level: 'medium' },
   { code: 'ph', name: 'Филиппины', level: 'medium' },
@@ -98,7 +100,7 @@ const COUNTRIES = [
   { code: 'lk', name: 'Шри-Ланка', level: 'medium' },
   { code: 'np', name: 'Непал', level: 'medium' },
   { code: 'iq', name: 'Ирак', level: 'medium' },
-  { code: 'ae', name: 'ОАЭ', level: 'medium' },
+  { code: 'ae', name: 'ОАЭ', level: 'medium', aliases: ['Объединённые Арабские Эмираты'] },
   { code: 'qa', name: 'Катар', level: 'medium' },
   { code: 'kw', name: 'Кувейт', level: 'medium' },
   { code: 'jo', name: 'Иордания', level: 'medium' },
@@ -126,10 +128,10 @@ const COUNTRIES = [
   { code: 'bt', name: 'Бутан', level: 'hard' },
   { code: 'bw', name: 'Ботсвана', level: 'hard' },
   { code: 'bz', name: 'Белиз', level: 'hard' },
-  { code: 'cd', name: 'Демократическая Республика Конго', level: 'hard' },
+  { code: 'cd', name: 'Демократическая Республика Конго', level: 'hard', aliases: ['Заир'] },
   { code: 'cf', name: 'Центральноафриканская Республика', level: 'hard' },
   { code: 'cg', name: 'Республика Конго', level: 'hard' },
-  { code: 'ci', name: 'Кот-д’Ивуар', level: 'hard' },
+  { code: 'ci', name: 'Кот-д’Ивуар', level: 'hard', aliases: ['Берег Слоновой Кости'] },
   { code: 'cm', name: 'Камерун', level: 'hard' },
   { code: 'dj', name: 'Джибути', level: 'hard' },
   { code: 'do', name: 'Доминиканская Республика', level: 'hard' },
@@ -151,7 +153,7 @@ const COUNTRIES = [
   { code: 'ly', name: 'Ливия', level: 'hard' },
   { code: 'mg', name: 'Мадагаскар', level: 'hard' },
   { code: 'ml', name: 'Мали', level: 'hard' },
-  { code: 'mm', name: 'Мьянма', level: 'hard' },
+  { code: 'mm', name: 'Мьянма', level: 'hard', aliases: ['Бирма'] },
   { code: 'mr', name: 'Мавритания', level: 'hard' },
   { code: 'mw', name: 'Малави', level: 'hard' },
   { code: 'mz', name: 'Мозамбик', level: 'hard' },
@@ -172,7 +174,7 @@ const COUNTRIES = [
   { code: 'ss', name: 'Южный Судан', level: 'hard' },
   { code: 'sv', name: 'Сальвадор', level: 'hard' },
   { code: 'sy', name: 'Сирия', level: 'hard' },
-  { code: 'sz', name: 'Эсватини', level: 'hard' },
+  { code: 'sz', name: 'Эсватини', level: 'hard', aliases: ['Свазиленд'] },
   { code: 'td', name: 'Чад', level: 'hard' },
   { code: 'tg', name: 'Того', level: 'hard' },
   { code: 'tj', name: 'Таджикистан', level: 'hard' },

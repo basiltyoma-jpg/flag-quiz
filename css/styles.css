@@ -589,6 +589,275 @@ body {
   font-family: inherit;
 }
 
+/* ---------------------------------------------------- дуэль: настройка */
+
+.party-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(12, 20, 42, 0.7);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.field__input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(8, 14, 32, 0.85);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.field__input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.transports {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.transport {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  text-align: left;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(9, 15, 34, 0.72);
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.transport:hover {
+  transform: translateY(-1px);
+}
+
+.transport.is-active {
+  border-color: var(--accent);
+  background: linear-gradient(160deg, rgba(99, 102, 241, 0.28), rgba(236, 72, 153, 0.16));
+}
+
+.transport__title {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.transport__description {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.party-setup__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.party-setup__join {
+  display: flex;
+  flex: 1 1 220px;
+  gap: 8px;
+}
+
+.party-setup__join .field__input {
+  flex: 1 1 auto;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------ дуэль: пати */
+
+.party {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.party__code {
+  margin: 0;
+  font-size: 16px;
+}
+
+.party__code b {
+  font-size: 22px;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, #a5b4fc, #f9a8d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.party__settings {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+.party__p2p {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px dashed var(--border);
+  background: rgba(12, 20, 42, 0.7);
+}
+
+.party__signal {
+  width: 100%;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(8, 14, 32, 0.85);
+  color: var(--text);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.party__players {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.party__player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(12, 20, 42, 0.7);
+}
+
+.party__player.is-empty {
+  border-style: dashed;
+  color: var(--text-dim);
+}
+
+.party__player-name {
+  font-weight: 600;
+}
+
+.party__player-role {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.party__status {
+  margin: 0;
+  min-height: 20px;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.party__status.is-error {
+  color: #fca5a5;
+}
+
+.party__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.party__actions .btn {
+  flex: 1 1 180px;
+}
+
+/* ------------------------------------------------- дуэль: панель и ввод */
+
+.duelbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: linear-gradient(120deg, rgba(99, 102, 241, 0.22), rgba(236, 72, 153, 0.14));
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.duelbar__note {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.answer__input {
+  flex: 1 1 220px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(8, 14, 32, 0.85);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+}
+
+.answer__input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.duel-result {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(12, 20, 42, 0.7);
+  text-align: center;
+}
+
+.duel-result__title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.duel-result__score {
+  margin: 6px 0 0;
+  font-size: 15px;
+  color: var(--text-dim);
+}
+
 @media (max-width: 520px) {
   .screen {
     padding: 18px 14px;
@@ -601,5 +870,14 @@ body {
 
   .result__correct {
     font-size: 52px;
+  }
+
+  .duelbar__note {
+    margin-left: 0;
+    flex: 1 1 100%;
+  }
+
+  .party__code b {
+    font-size: 19px;
   }
 }

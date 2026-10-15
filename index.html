@@ -42,10 +42,75 @@
       <p class="hint" id="pool-hint"></p>
 
       <button id="btn-start" class="btn btn--primary btn--wide" type="button">Играть</button>
+
+      <h2 class="screen__subtitle">Дуэль вдвоём</h2>
+      <div class="party-setup">
+        <label class="field">
+          <span class="field__label">Ваше имя</span>
+          <input id="duel-name" class="field__input" type="text" maxlength="16" placeholder="Игрок"
+                 autocomplete="off" spellcheck="false">
+        </label>
+
+        <div class="transports" id="transports" role="group" aria-label="Способ связи"></div>
+
+        <div class="party-setup__actions">
+          <button id="btn-party-create" class="btn btn--primary" type="button">Создать пати</button>
+          <div class="party-setup__join">
+            <input id="duel-code" class="field__input" type="text" maxlength="8" placeholder="Код пати"
+                   aria-label="Код пати" autocomplete="off" spellcheck="false">
+            <button id="btn-party-join" class="btn" type="button">Подключиться</button>
+          </div>
+        </div>
+
+        <p class="hint" id="party-hint">
+          Хост настраивает дуэль здесь: режим, уровень и число раундов выше берутся и для соперника.
+          Гость подключается по коду пати и играет ту же колоду.
+        </p>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------- дуэль -->
+    <section id="screen-lobby" class="screen" hidden>
+      <h2 class="screen__title">Пати</h2>
+
+      <div class="party">
+        <p class="party__code">
+          Код пати: <b id="party-code">—</b>
+          <button id="btn-copy-code" class="btn btn--ghost" type="button">Скопировать</button>
+        </p>
+        <p class="hint" id="party-link"></p>
+        <p class="party__settings" id="party-settings"></p>
+
+        <div class="party__p2p" id="party-p2p" hidden>
+          <p class="hint" id="party-step"></p>
+          <textarea class="party__signal" id="party-signal" rows="3" readonly
+                    aria-label="Ваш код для соперника"></textarea>
+          <textarea class="party__signal" id="party-reply" rows="3"
+                    placeholder="Вставьте код соперника" aria-label="Код соперника"></textarea>
+          <div class="party__actions">
+            <button id="btn-party-accept" class="btn" type="button">Принять код</button>
+            <button id="btn-copy-signal" class="btn btn--ghost" type="button">Скопировать свой код</button>
+          </div>
+        </div>
+
+        <ul class="party__players" id="party-players"></ul>
+        <p class="party__status" id="party-status"></p>
+
+        <div class="party__actions">
+          <button id="btn-party-start" class="btn btn--primary" type="button">Начать дуэль</button>
+          <button id="btn-party-leave" class="btn" type="button">Выйти</button>
+        </div>
+      </div>
     </section>
 
     <!-- ---------------------------------------------------------- вопросы -->
     <section id="screen-game" class="screen" hidden>
+      <div class="duelbar" id="duelbar" hidden>
+        <span class="duelbar__score" id="duel-me">Вы: 0</span>
+        <span class="duelbar__score" id="duel-rival">Соперник: —</span>
+        <span class="duelbar__note" id="duel-note" hidden></span>
+      </div>
+
       <div class="gamebar">
         <span id="progress-text">Вопрос 1 / 10</span>
         <span class="gamebar__score" id="score-text">Счёт: 0</span>
@@ -60,6 +125,12 @@
       </div>
 
       <div class="options" id="options"></div>
+
+      <form class="answer" id="answer-form" hidden autocomplete="off">
+        <input class="answer__input" id="answer-input" type="text" maxlength="40"
+               placeholder="Ответ: 5 букв" aria-label="Название страны" spellcheck="false">
+        <button id="btn-answer" class="btn btn--primary" type="submit">Ответить</button>
+      </form>
 
       <div class="feedback" id="feedback" hidden>
         <span class="feedback__text" id="feedback-text"></span>
@@ -77,6 +148,12 @@
       <div class="progress progress--big"><div class="progress__bar" id="result-bar"></div></div>
       <p class="result__percent" id="result-percent">0%</p>
       <p class="hint" id="result-best"></p>
+
+      <div class="duel-result" id="duel-result" hidden>
+        <h3 class="duel-result__title" id="duel-title">Ждём соперника…</h3>
+        <p class="duel-result__score" id="duel-score"></p>
+      </div>
+
       <div class="result__actions">
         <button id="btn-again" class="btn btn--primary" type="button">Ещё раз</button>
         <button id="btn-settings" class="btn" type="button">Изменить настройки</button>
@@ -84,7 +161,8 @@
     </section>
 
     <footer class="footer">
-      Клавиши <kbd>1</kbd>–<kbd>4</kbd> — выбрать ответ, <kbd>Enter</kbd> — дальше.
+      Клавиши <kbd>1</kbd>–<kbd>4</kbd> — выбрать ответ, <kbd>Enter</kbd> — ответить и перейти дальше.
+      В режиме «Название по флагу» ответ вводится текстом, в дуэли оба играют одну колоду.
       Изображения: flagcdn.com и mapsicon (локальные копии в папке assets).
     </footer>
   </div>
@@ -92,6 +170,10 @@
   <script src="js/data.js"></script>
   <script src="js/assets.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/signal.js"></script>
+  <script src="js/duel.js"></script>
+  <script src="js/net.js"></script>
+  <script src="js/duel-ui.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

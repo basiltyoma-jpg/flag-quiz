@@ -99,7 +99,7 @@ async function main() {
 
   console.log('== загрузка страницы');
   check(jsdomErrors.length === 0, `ошибки загрузки: ${jsdomErrors.join(' | ')}`);
-  check($$('#modes .mode').length === 2, 'на главной должно быть 2 режима');
+  check($$('#modes .mode').length === 3, 'на главной должно быть 3 режима');
   check($$('#levels .level').length === 4, 'на главной должно быть 4 уровня');
   check($('#screen-home').hidden === false, 'главный экран должен быть виден');
   check(text('#rounds-value') === '10', 'стартовое число раундов — 10');
@@ -302,7 +302,7 @@ async function main() {
   check(shapeImage.startsWith('assets/shapes/'), 'вопрос режима территорий ссылается на контур');
 
   const scripts = requests.filter((item) => item.url.endsWith('.js'));
-  check(scripts.length === 4, `загружено 4 скрипта, а не ${scripts.length}`);
+  check(scripts.length === 8, `загружено 8 скриптов, а не ${scripts.length}`);
   check(requests.some((item) => item.url.endsWith('/css/styles.css')), 'стили подключены');
 
   /* ---------- публикация в подпапке: так работает GitHub Pages (/flag-quiz/) */

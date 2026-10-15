@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const SCREENS = ['home', 'game', 'result'];
+const SCREENS = ['home', 'game', 'result', 'lobby'];
 
 const state = {
   modeId: MODES[0].id,
@@ -15,14 +15,17 @@ const state = {
   index: 0,
   correct: 0,
   answered: false,
-  timerId: null
+  timerId: null,
+  /** Когда показан текущий раунд: в дуэли по этому времени считается скорость ответа. */
+  questionAt: 0
 };
 
 const dom = {
   screens: {
     home: document.getElementById('screen-home'),
     game: document.getElementById('screen-game'),
-    result: document.getElementById('screen-result')
+    result: document.getElementById('screen-result'),
+    lobby: document.getElementById('screen-lobby')
   },
   modes: document.getElementById('modes'),
   levels: document.getElementById('levels'),
@@ -49,7 +52,13 @@ const dom = {
   resultPercent: document.getElementById('result-percent'),
   resultBest: document.getElementById('result-best'),
   again: document.getElementById('btn-again'),
-  settings: document.getElementById('btn-settings')
+  settings: document.getElementById('btn-settings'),
+  answerForm: document.getElementById('answer-form'),
+  answerInput: document.getElementById('answer-input'),
+  answerButton: document.getElementById('btn-answer'),
+  duelBar: document.getElementById('duelbar'),
+  duelNote: document.getElementById('duel-note'),
+  duelResult: document.getElementById('duel-result')
 };
 
 /* ------------------------------------------------------------------ экраны */
@@ -123,27 +132,17 @@ function renderPoolHint() {
     state.rounds <= pool.length
       ? ''
       : ` Вопросов больше, чем стран, поэтому некоторые ${mode.poolLabel} повторятся.`;
+  const answers =
+    (mode.kind || 'options') === 'typing'
+      ? 'название страны нужно написать вручную.'
+      : `в каждом вопросе ${OPTION_COUNT} варианта ответа.`;
   dom.poolHint.textContent =
-    `Уровень «${levelById(state.levelId).title}»: доступно ${pool.length} ${mode.poolLabel}, ` +
-    `в каждом вопросе ${OPTION_COUNT} варианта ответа.${repeats}`;
+    `Уровень «${levelById(state.levelId).title}»: доступно ${pool.length} ${mode.poolLabel}, ${answers}${repeats}`;
 }
 
-/** Правильная форма слова «раунд». */
+/** Правильная форма слова «раунд» (единственная реализация живёт в js/game.js). */
 function roundWord(count) {
-  const tail = count % 100;
-  if (tail >= 11 && tail <= 14) {
-    return 'раундов';
-  }
-  switch (count % 10) {
-    case 1:
-      return 'раунд';
-    case 2:
-    case 3:
-    case 4:
-      return 'раунда';
-    default:
-      return 'раундов';
-  }
+  return roundsWord(count);
 }
 
 /** Обновляет подпись кнопки запуска. */
@@ -154,13 +153,23 @@ function renderStart() {
 
 /* ------------------------------------------------------------------- игра */
 
-/** Начинает новую игру с текущими настройками. */
+/** Начинает новую одиночную игру с текущими настройками. */
 function startGame() {
-  state.quiz = createQuiz({
-    modeId: state.modeId,
-    levelId: state.levelId,
-    rounds: state.rounds
-  });
+  startQuiz(
+    createQuiz({
+      modeId: state.modeId,
+      levelId: state.levelId,
+      rounds: state.rounds
+    })
+  );
+}
+
+/**
+ * Запускает готовую колоду раундов. Её собирает одиночная игра
+ * или хост дуэли (js/duel-ui.js присылает колоду обоим игрокам).
+ */
+function startQuiz(quiz) {
+  state.quiz = quiz;
   state.index = 0;
   state.correct = 0;
   state.answered = false;
@@ -172,8 +181,10 @@ function startGame() {
 function renderQuestion() {
   const question = state.quiz.questions[state.index];
   const mode = modeById(state.quiz.modeId);
+  const typing = state.quiz.kind === 'typing' || !question.options.length;
 
   state.answered = false;
+  state.questionAt = Date.now();
   dom.progressText.textContent = `Вопрос ${state.index + 1} / ${state.quiz.rounds}`;
   dom.scoreText.textContent = `Счёт: ${state.correct}`;
   dom.progressBar.style.width = `${(state.index / state.quiz.rounds) * 100}%`;
@@ -181,24 +192,42 @@ function renderQuestion() {
 
   dom.picture.classList.remove('is-correct', 'is-wrong');
   dom.pictureImg.src = question.image;
-  dom.pictureImg.alt = 'Угадайте страну по картинке';
+  dom.pictureImg.alt = typing
+    ? 'Напишите название страны по флагу'
+    : 'Угадайте страну по картинке';
   dom.pictureCode.textContent = '?';
 
   dom.options.innerHTML = '';
-  question.options.forEach((option, position) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'option';
-    button.dataset.name = option.name;
-    button.innerHTML =
-      `<span class="option__key">${position + 1}</span>` +
-      `<span class="option__name">${option.name}</span>`;
-    dom.options.appendChild(button);
-  });
+  dom.options.hidden = typing;
+  dom.answerForm.hidden = !typing;
+  dom.answerButton.disabled = false;
+  dom.answerInput.disabled = false;
+
+  if (typing) {
+    dom.answerInput.value = '';
+    dom.answerInput.placeholder = `Ответ: ${question.letters} букв`;
+    try {
+      dom.answerInput.focus();
+    } catch (error) {
+      /* встроенные браузеры могут не поддерживать фокус */
+    }
+  } else {
+    question.options.forEach((option, position) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'option';
+      button.dataset.name = option.name;
+      button.innerHTML =
+        `<span class="option__key">${position + 1}</span>` +
+        `<span class="option__name">${option.name}</span>`;
+      dom.options.appendChild(button);
+    });
+  }
 
   dom.feedback.hidden = true;
   dom.next.hidden = true;
 
+  refreshDuelBar();
   preloadNextImage();
 }
 
@@ -211,15 +240,46 @@ function preloadNextImage() {
   }
 }
 
-/** Обрабатывает выбор ответа. */
+/** Обрабатывает выбор варианта ответа. */
 function answer(name, button) {
   if (state.answered) {
     return;
   }
+  const question = state.quiz.questions[state.index];
+  const isCorrect = name === question.name;
+  settleAnswer(
+    isCorrect,
+    isCorrect ? 'Верно!' : `Неверно. Правильный ответ: ${question.name}`,
+    { button }
+  );
+}
+
+/** Проверяет ответ, набранный вручную (режим «Название по флагу»). */
+function submitTypedAnswer() {
+  if (state.answered || state.screen !== 'game') {
+    return;
+  }
+  const question = state.quiz.questions[state.index];
+  const value = dom.answerInput.value;
+  if (!value.trim()) {
+    return;
+  }
+  const verdict = compareTypedAnswer(value, question);
+  const feedback =
+    verdict.verdict === 'correct'
+      ? 'Верно!'
+      : verdict.verdict === 'close'
+        ? `Верно, но с опечаткой: ${verdict.answer}`
+        : `Неверно. Правильный ответ: ${verdict.answer}`;
+  settleAnswer(verdict.correct, feedback);
+}
+
+/** Фиксирует ответ раунда: подсветка, подсказка, переход дальше и отчёт дуэли. */
+function settleAnswer(isCorrect, feedbackText, options) {
+  const settings = options || {};
   state.answered = true;
 
   const question = state.quiz.questions[state.index];
-  const isCorrect = name === question.name;
   if (isCorrect) {
     state.correct += 1;
   }
@@ -228,22 +288,28 @@ function answer(name, button) {
     optionButton.classList.add('is-locked');
     if (optionButton.dataset.name === question.name) {
       optionButton.classList.add('is-correct');
-    } else if (optionButton === button) {
+    } else if (optionButton === settings.button) {
       optionButton.classList.add('is-wrong');
     }
   });
+  if (settings.button) {
+    settings.button.classList.add(isCorrect ? 'is-correct' : 'is-wrong');
+    settings.button.classList.add('is-locked');
+  }
 
   dom.picture.classList.add(isCorrect ? 'is-correct' : 'is-wrong');
   dom.pictureCode.textContent = question.code.toUpperCase();
   dom.scoreText.textContent = `Счёт: ${state.correct}`;
 
+  dom.answerInput.disabled = true;
+  dom.answerButton.disabled = true;
+
   dom.feedback.hidden = false;
   dom.feedbackText.className = isCorrect ? 'feedback__text is-correct' : 'feedback__text is-wrong';
-  dom.feedbackText.textContent = isCorrect
-    ? 'Верно!'
-    : `Неверно. Правильный ответ: ${question.name}`;
+  dom.feedbackText.textContent = feedbackText;
   dom.next.hidden = false;
 
+  reportDuelAnswer(isCorrect);
   state.timerId = window.setTimeout(nextQuestion, isCorrect ? 1100 : 1900);
 }
 
@@ -303,6 +369,38 @@ function showResult() {
       : `Лучший результат для этого уровня: ${best} из ${rounds}`;
 
   showScreen('result');
+  refreshDuelResult();
+}
+
+/* --------------------------------------------- связка с дуэлью (js/duel-ui.js) */
+
+/** Если идёт дуэль, обновляет её панель над вопросом. */
+function refreshDuelBar() {
+  if (typeof DuelUI !== 'undefined' && DuelUI.refreshBar) {
+    DuelUI.refreshBar();
+  }
+}
+
+/** Отдаёт дуэли результат раунда вместе со временем ответа. */
+function reportDuelAnswer(isCorrect) {
+  if (typeof DuelUI !== 'undefined' && DuelUI.reportAnswer) {
+    DuelUI.reportAnswer({ correct: isCorrect, ms: Date.now() - state.questionAt });
+  }
+}
+
+/** «Ещё раз»: в дуэли новую партию запускает её модуль. */
+function playAgain() {
+  if (typeof DuelUI !== 'undefined' && DuelUI.rematch && DuelUI.rematch()) {
+    return;
+  }
+  startGame();
+}
+
+/** Если идёт дуэль, обновляет её блок на экране результатов. */
+function refreshDuelResult() {
+  if (typeof DuelUI !== 'undefined' && DuelUI.renderDuelResult) {
+    DuelUI.renderDuelResult();
+  }
 }
 
 /* ----------------------------------------------------- обработчики событий */
@@ -348,6 +446,11 @@ function wireEvents() {
   dom.start.addEventListener('click', startGame);
   dom.next.addEventListener('click', nextQuestion);
 
+  dom.answerForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    submitTypedAnswer();
+  });
+
   dom.options.addEventListener('click', (event) => {
     const button = event.target.closest('.option');
     if (button) {
@@ -355,7 +458,7 @@ function wireEvents() {
     }
   });
 
-  dom.again.addEventListener('click', startGame);
+  dom.again.addEventListener('click', playAgain);
   dom.settings.addEventListener('click', () => {
     showScreen('home');
     renderPoolHint();
@@ -364,6 +467,9 @@ function wireEvents() {
   dom.home.addEventListener('click', () => {
     window.clearTimeout(state.timerId);
     state.timerId = null;
+    if (typeof DuelUI !== 'undefined' && DuelUI.leaveIfActive) {
+      DuelUI.leaveIfActive();
+    }
     showScreen('home');
     renderPoolHint();
     renderStart();
@@ -372,7 +478,7 @@ function wireEvents() {
   document.addEventListener('keydown', (event) => {
     if (state.screen === 'game') {
       const position = ['1', '2', '3', '4'].indexOf(event.key);
-      if (position >= 0 && !state.answered) {
+      if (position >= 0 && !state.answered && !dom.options.hidden) {
         const buttons = dom.options.querySelectorAll('.option');
         if (buttons[position]) {
           answer(buttons[position].dataset.name, buttons[position]);
@@ -387,7 +493,7 @@ function wireEvents() {
       return;
     }
     if (state.screen === 'result' && event.key === 'Enter') {
-      startGame();
+      playAgain();
       event.preventDefault();
     }
   });
@@ -411,6 +517,9 @@ function init() {
   renderStart();
   wireEvents();
   showScreen('home');
+  if (typeof DuelUI !== 'undefined' && DuelUI.init) {
+    DuelUI.init();
+  }
 }
 
 /* Скрипт может быть подключён обычным тегом, через defer или динамически,
